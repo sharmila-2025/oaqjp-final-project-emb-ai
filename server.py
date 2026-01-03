@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, render_template, request
 from EmotionDetection.emotion_detection import emotion_detector
 
 app = Flask("Emotion Detector")
@@ -9,10 +9,13 @@ def text_emotion_detector():
 
     formatted_response = emotion_detector(text_to_analyze)
 
-    dominant_emotion = formatted_response['dominant_emotion']
-    emotions = formatted_response.pop('dominant_emotion')
+    dominant_emotion = formatted_response.pop('dominant_emotion')
+    emotions = (str(formatted_response)).replace('{','').replace('}','')
 
-    return "For the given statement, the system response is {}. The dominant emotion is{}.".format(emotions, dominant_emotion)
+    if dominant_emotion == 'None':
+        return "Invalid text!"
+
+    return "For the given statement, the system response is {}. The dominant emotion is {}.".format(emotions, dominant_emotion)
 
 @app.route("/")
 def render_index_page():
